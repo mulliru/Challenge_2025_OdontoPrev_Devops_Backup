@@ -94,7 +94,7 @@ Pipeline de CD sendo executada com sucesso ![Pipeline CD rodando](docs/imagens/S
 
 Para realizar os testes, é possível utilizar as pipelines que executam o pytest, ou rodar os testes diretamente no terminal utilizando o comando pytest dentro da pasta de testes do projeto [`test`](DevOps_Entrega3/tests/) isso iniciará a execução dos testes e irá verificar se os testes estão passando ou não. Antes de executar os testes, certifique-se de que a API está em execução, utilizando o comando `python app.py` no terminal. Após isso, você pode rodar `pytest` para iniciar os testes automatizados.
 
-![Pytest](docs/imagens/Sprint_4/pytestSucesso.png)
+![Pytest](./docs/imagens/Sprint_4/pytestSucesso.png)
 ---
 
 ## Scripts Json para teste da API
