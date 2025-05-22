@@ -77,7 +77,7 @@ Essas variáveis são aplicadas automaticamente durante o processo de deploy.
 
 ## 🛠️ Desenho da Pipeline
 
-![Desenho da pipeline](docs/Imangensges/Sprint_4/DiagramaFinalNoturno.drawio.png)
+![Desenho da pipeline](docs/Imagens/Sprint_4/DiagramaFinalNoturno.drawio.png)
 
 ---
 
@@ -85,9 +85,9 @@ Essas variáveis são aplicadas automaticamente durante o processo de deploy.
 
 Para rodar à pipeline de CI e de CD é necessário fazer um commit no repositório: [`Link do repositório no github`](https://github.com/mulliru/Challenge_2025_OdontoPrev_Devops) dentro da branch main e o GitHub Actions irá executar à pipeline. Para executar manualmente à pipeline é necessário acessar o portal do Azure e ir até à pipeline uma das pipelines criadas e clicar em "Run" e observar o processo.
 
-Pipeline de CI sendo executada com sucesso ![Pipeline CI rodando](docs/Imangensges/Sprint_4/pipelineCi.png)
+Pipeline de CI sendo executada com sucesso ![Pipeline CI rodando](docs/Imagens/Sprint_4/pipelineCi.png)
 
-Pipeline de CD sendo executada com sucesso ![Pipeline CD rodando](./docs/Imangensges/Sprint_4/pipelineCD.png)
+Pipeline de CD sendo executada com sucesso ![Pipeline CD rodando](./docs/Imagens/Sprint_4/pipelineCD.png)
 
 
 ## Como realizar os Testes 
