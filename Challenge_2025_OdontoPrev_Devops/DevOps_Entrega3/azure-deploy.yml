@@ -1,0 +1,84 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureSubscription: 'acr-connection-infra' # para recursos Azure
+  dockerRegistryServiceConnection: 'acr-connection-docker-final' # para login/push no ACR
+  location: 'brazilsouth'
+  resourceGroup: 'rg-appinfra-553315'
+  acrName: 'acrsqldbrm553315'
+  acrSku: 'Basic'
+  appServicePlan: 'plan-odontoprev-python-553315'
+  webAppName: 'app-odontoprev-python-rm553315'
+  dockerRegistry: 'acrsqldbrm553315.azurecr.io'
+  imageRepository: 'flask-app'
+  dockerImage: 'acrsqldbrm553315.azurecr.io/flask-app:latest'
+  dockerfilePath: 'DevOps_Entrega3/Dockerfile'
+  buildContext: 'DevOps_Entrega3'
+  webAppPort: '8000'
+
+stages:
+  - stage: CriarInfraestrutura
+    displayName: 'Criar Infraestrutura no Azure'
+    jobs:
+      - job: CriarRecursos
+        displayName: 'Criar RG, ACR, Plano e App Service'
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Executar Script de Criação da Infra'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az group create --name $(resourceGroup) --location $(location)
+
+                az acr create --resource-group $(resourceGroup) --name $(acrName) --sku $(acrSku) --admin-enabled true
+
+                az appservice plan create --name $(appServicePlan) --resource-group $(resourceGroup) --sku B1 --is-linux
+
+                az webapp create --resource-group $(resourceGroup) --plan $(appServicePlan) --name $(webAppName) --deployment-container-image-name $(dockerImage)
+
+                az webapp config appsettings set --name $(webAppName) --resource-group $(resourceGroup) --settings \
+                  WEBSITES_PORT=$(webAppPort) \
+                  DB_HOST=servidor-sqldb-rm553315.database.windows.net \
+                  DB_NAME=db-odontoprev-553315 \
+                  DB_USER=adm-sqldb-dimdim \
+                  DB_PASS=$(sqlPassword)
+
+  - stage: BuildDockerImage
+    displayName: 'Build e Push da Imagem Docker'
+    dependsOn: CriarInfraestrutura
+    jobs:
+      - job: BuildAndPush
+        displayName: 'Construir e enviar imagem ao ACR'
+        steps:
+          - task: Docker@2
+            displayName: 'Build e Push da imagem Docker'
+            inputs:
+              command: 'buildAndPush'
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(dockerRegistry)/$(imageRepository)'
+              dockerfile: '$(dockerfilePath)'
+              buildContext: '$(buildContext)'
+              tags: |
+                latest
+
+  - stage: DeployAplicacao
+    displayName: 'Deploy da Aplicação'
+    dependsOn: BuildDockerImage
+    jobs:
+      - job: DeployApp
+        displayName: 'Deploy da imagem no App Service'
+        steps:
+          - task: AzureWebAppContainer@1
+            displayName: 'Publicar imagem no App Service'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appName: '$(webAppName)'
+              imageName: '$(dockerImage)'

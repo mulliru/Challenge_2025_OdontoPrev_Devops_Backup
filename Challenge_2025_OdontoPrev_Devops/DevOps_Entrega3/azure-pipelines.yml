@@ -1,0 +1,33 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  dockerRegistryServiceConnection: 'acr-connection-docker-final'  # Tipo: Docker Registry
+  imageRepository: 'flask-app'
+  dockerRegistry: 'acrsqldbrm553315.azurecr.io'
+  dockerfilePath: 'DevOps_Entrega3/Dockerfile'
+  buildContext: 'DevOps_Entrega3'
+  tag: 'latest'
+
+stages:
+  - stage: BuildDockerImage
+    displayName: 'Build e Push da Imagem Docker'
+    jobs:
+      - job: BuildAndPush
+        displayName: 'Construir e enviar imagem ao ACR'
+        steps:
+          - task: Docker@2
+            displayName: 'Build e Push da imagem Docker'
+            inputs:
+              command: 'buildAndPush'
+              repository: '$(dockerRegistry)/$(imageRepository)'
+              dockerfile: '$(dockerfilePath)'
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              buildContext: '$(buildContext)'
+              tags: |
+                $(tag)

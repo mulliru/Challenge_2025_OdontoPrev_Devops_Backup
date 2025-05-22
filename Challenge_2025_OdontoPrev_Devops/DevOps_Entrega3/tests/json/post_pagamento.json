@@ -1,0 +1,6 @@
+{
+  "atendimento_id": 1,
+  "valor": 350.00,
+  "metodo_pagamento": "Pix",
+  "status": "Pago"
+}

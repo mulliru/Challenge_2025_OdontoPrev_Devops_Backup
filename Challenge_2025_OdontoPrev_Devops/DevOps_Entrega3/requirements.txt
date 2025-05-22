@@ -1,0 +1,7 @@
+# Dependências da API de CRUD
+Flask
+pyodbc
+requests
+pytest
+Faker
+
